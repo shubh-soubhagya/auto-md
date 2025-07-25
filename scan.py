@@ -34,7 +34,7 @@ def save_to_csv(data, output_csv="scanned_files.csv"):
             writer.writerow(row)
 
 if __name__ == "__main__":
-    root_directory = r"C:\Users\hp\Desktop\Accen\auto-md"  # You can replace this with your target directory
+    root_directory = r"C:\Users\hp\Desktop\Accen\DALLE-image-generation-bot"  # You can replace this with your target directory
     scanned_data = scan_files(root_directory)
     save_to_csv(scanned_data)
     print(f"Saved {len(scanned_data)} files to 'scanned_files.csv'")
