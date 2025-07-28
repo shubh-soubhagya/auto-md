@@ -7,7 +7,7 @@ def load_csv_data(csv_path):
         reader = csv.DictReader(f)
         for row in reader:
             file_path = row.get("file_path", "Unknown")
-            file_content = row.get("file_content", "")[:1000]  # Optional trim for LLMs
+            file_content = row.get("file_content", "")  # Optional trim for LLMs
             content_summary.append(f"### {file_path}\n```text\n{file_content}\n```")
     return "\n\n".join(content_summary)
 
@@ -29,15 +29,23 @@ def call_gemma_ollama(prompt):
         return ""
 
 def main():
-    csv_path = r"scanned_files.csv"  # Path to your CSV file
+    csv_path = r"scanned_files.csv"
+
+    # ✅ Collect extra context from user
+    print("📝 Provide any additional input/context for the README (e.g., purpose, special tools, audience, use cases).")
+    user_notes = input("Your input: ").strip()
+
     file_summaries = load_csv_data(csv_path)
 
     prompt = f"""
 You are an expert open-source developer and documentation writer.
-
 You have been provided with a list of project files and their code snippets. Your task is to generate a complete, professional-quality README.md file that clearly explains the project to new developers or users.
-
 Each code snippet is provided with a file path followed by a code block. Analyze these code snippets to understand what the project does, how it is structured, and what technologies it uses.
+
+The user has also provided the following additional context about the project, which you must incorporate while generating the README:
+-----------------
+{user_notes}
+-----------------
 
 Use this information to generate a detailed README.md with the following sections:
 
@@ -62,8 +70,6 @@ Only if the codebase mentions any third-party API (contains the word "api"), inc
 If applicable, explain how to install or download any additional tools such as pretrained models or other external dependencies.
 Each step should include the corresponding command using GitHub-compatible Markdown formatting, and the command lines must be shown as bash code blocks (i.e., triple backticks with bash).
 Do not include .env or API-related steps unless the code or file content explicitly contains the word "API".
-Note: command lines must be shown as bash code blocks (i.e., triple backticks with bash).
-
 
 ## File Descriptions
 Summarize important files and their roles, based on file paths and code. Not all files. Only the important ones.
